@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星火联盟作品《你好 陈铁军》</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+        #videoContainer {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        #mainVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* 顶部左侧留白logo区域 */
+        .logo-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px; /* 留白高度，可调整 */
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* 靠左对齐 */
+            padding-left: 20px; /* 左侧间距，可调整 */
+            background: rgba(255,255,255,0.05); /* 透明留白背景 */
+            backdrop-filter: blur(2px); /* 轻微模糊质感 */
+            z-index: 10;
+        }
+        /* logo样式 */
+        .logo-img {
+            height: 50px; /* logo高度，可调整 */
+            object-fit: contain; /* 保持logo比例不畸变 */
+        }
+        #muteTip {
+            position: absolute;
+            bottom: 40px; /* 恢复合适位置（无底部logo） */
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.5);
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+        #muteTip.fade {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="videoContainer">
+        <!-- 顶部左侧留白logo区域 -->
+        <div class="logo-left">
+            <img src="./images/your-logo-top.png alt="品牌logo" class="logo-img">
+        </div>
+        
+        <video 
+            id="mainVideo" 
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            preload="auto"
+        >
+            <source src="your-video.mp4" type="video/mp4">
+            <source src="your-video.webm" type="video/webm">
+            您的浏览器不支持HTML5视频播放，请更新浏览器后重试。
+        </video>
+        
+        <div id="muteTip">点击画面切换声音</div>
+    </div>
+
+    <script>
+        const video = document.getElementById('mainVideo');
+        const muteTip = document.getElementById('muteTip');
+        
+        window.addEventListener('load', () => {
+            if (video.paused) {
+                video.play().catch(err => {
+                    console.log('自动播放失败，引导用户交互：', err);
+                    document.body.addEventListener('click', () => {
+                        video.play();
+                    }, { once: true });
+                });
+            }
+
+            setTimeout(() => {
+                muteTip.classList.add('fade');
+            }, 3000);
+        });
+
+        video.addEventListener('click', () => {
+            video.muted = !video.muted;
+            muteTip.classList.remove('fade');
+            muteTip.textContent = video.muted ? '点击画面开启声音' : '点击画面关闭声音';
+            setTimeout(() => {
+                muteTip.classList.add('fade');
+            }, 2000);
+        });
+
+        video.addEventListener('error', () => {
+            muteTip.textContent = '视频加载失败，请检查地址';
+            muteTip.classList.remove('fade');
+        });
+    </script>
+</body>
+</html>
